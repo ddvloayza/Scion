@@ -25,3 +25,4 @@ amplify/backend/function/transcribeAudio/src/credentials.json
 amplify/team-provider-info.json
 amplify/backend/function/**/src/credentials.json
 .env
+.next
