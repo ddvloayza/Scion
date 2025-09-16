@@ -1,6 +1,6 @@
 {
   "api": {
-    "TranscriptionAPI": {
+    "transcribeaudioapi": {
       "dependsOn": [
         {
           "attributes": [

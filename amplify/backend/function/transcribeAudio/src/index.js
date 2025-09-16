@@ -42,17 +42,17 @@ exports.handler = async (event) => {
         transcript: text
       };
 
-      const itemMatch = text.match(/item\s+(.+?),\s+precio/i);
+      const itemMatch = text.match(/(?:item|producto)[\s,:]+(.+?)[\s,:]+(?:precio|costo|valor)/i);
       if (itemMatch) datos.item = itemMatch[1].trim();
 
-      const precioMatch = text.match(/precio de compra\s+(\d+(?:[\.,]\d+)?)(?:\s+)?([a-zA-Z]+)/i);
+      const precioMatch = text.match(/(?:precio(?: de compra)?|costo|valor)\s*[,:]?\s*\$?\s*(\d+(?:[\.,]\d+)?)(?:\s+)?([a-zA-Z]+)/i);
       if (precioMatch) {
         datos.precio_compra = precioMatch[1].replace(',', '.');
         datos.moneda = precioMatch[2].toLowerCase();
       }
 
-      const clienteMatch = text.match(/para\s+(.+?)[\.,]?$/i);
-      if (clienteMatch) datos.cliente = clienteMatch[1].trim();
+      const clienteMatch = text.match(/para\s+(el cliente\s+)?(.+?)[\.,]?$/i);
+      if (clienteMatch) datos.cliente = clienteMatch[2].trim();
 
       return datos;
     };
@@ -61,7 +61,12 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'OPTIONS,POST',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      },
       body: JSON.stringify(datosExtraidos)
     };
 
@@ -69,6 +74,11 @@ exports.handler = async (event) => {
     console.error('❌ Error en transcripción Lambda:', error);
     return {
       statusCode: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'OPTIONS,POST',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      },
       body: JSON.stringify({ error: 'Error en la función Lambda' })
     };
   }
